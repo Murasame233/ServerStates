@@ -72,12 +72,19 @@ impl MacOS {
     }
     fn _update(&mut self) {
         unsafe {
-            host_processor_info(self.host, PROCESSOR_CPU_LOAD_INFO, &(self.cpu_count), &(self.ptr), &(self.info_size));
+            host_processor_info(
+                self.host,
+                PROCESSOR_CPU_LOAD_INFO,
+                &(self.cpu_count),
+                &(self.ptr),
+                &(self.info_size),
+            );
         }
         let cpu_count = self.cpu_count;
         if self.core_status.capacity() != cpu_count as usize {
             self.core_status.resize(cpu_count as usize, 0);
-            self.prev_vec.resize(cpu_count as usize, Prev { total: 0, idle: 0 })
+            self.prev_vec
+                .resize(cpu_count as usize, Prev { total: 0, idle: 0 })
         }
         let cpu_load: *mut processor_cpu_load_info = self.ptr.cast();
         let slice: &[processor_cpu_load_info] =
@@ -90,9 +97,9 @@ impl MacOS {
                     + ticks[CPU_STATE_SYSTEM as usize]
                     + ticks[CPU_STATE_NICE as usize]
                     + ticks[CPU_STATE_IDLE as usize];
-                let re = (1f32
-                    - (ticks[CPU_STATE_IDLE as usize] - prev.idle) as f32
-                        / (total - prev.total) as f32) as i32 * 100;
+                let new_idle = ticks[CPU_STATE_IDLE as usize] - prev.idle;
+                let new_total = total - prev.total;
+                let re = ((1f32 - new_idle as f32 / new_total as f32) * 100f32) as i32;
                 prev.total = total;
                 prev.idle = ticks[CPU_STATE_IDLE as usize];
                 re
@@ -113,7 +120,7 @@ impl Platform for MacOS {
         &(self.core_status)
     }
 
-    fn get(&self,core: usize) -> i32 {
+    fn get(&self, core: usize) -> i32 {
         self.core_status[core]
     }
 }
