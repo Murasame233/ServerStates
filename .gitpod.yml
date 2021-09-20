@@ -1,0 +1,13 @@
+tasks:
+  - name: pre_ready
+    init: cargo build
+github:
+  prebuilds:
+    # enable for the default branch (defaults to true)
+    master: true
+vscode:
+  extensions:
+    - matklad.rust-analyzer
+    - esbenp.prettier-vscode
+    - serayuzgur.crates
+    - vadimcn.vscode-lldb
