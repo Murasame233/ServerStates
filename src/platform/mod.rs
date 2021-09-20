@@ -2,6 +2,10 @@
 pub mod macos;
 #[cfg(target_os = "macos")]
 pub use macos::MacOS;
+#[cfg(target_os = "linux")]
+pub mod linux;
+#[cfg(target_os = "linux")]
+pub use linux::Linux;
 
 pub trait Platform {
     fn init()->Self;
@@ -10,10 +14,12 @@ pub trait Platform {
     fn get(&self,core:usize)->i32;
 }
 
+#[cfg(target_os = "macos")]
 pub fn get_platform()-> impl Platform {
-    if cfg!(target_os="macos") {
-        MacOS::init()
-    } else {
-        todo!()
-    }
+    MacOS::init()
+}
+
+#[cfg(target_os = "linux")]
+pub fn get_platform()-> impl Platform {
+    Linux::init()
 }
