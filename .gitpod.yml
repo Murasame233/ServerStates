@@ -1,6 +1,8 @@
 tasks:
   - name: pre_ready
-    init: cargo build
+    init: | 
+      cargo build 
+      rustup component add rustfmt --toolchain nightly-x86_64-unknown-linux-gnu
 github:
   prebuilds:
     # enable for the default branch (defaults to true)
