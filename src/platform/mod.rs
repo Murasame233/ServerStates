@@ -7,6 +7,16 @@ pub mod linux;
 #[cfg(target_os = "linux")]
 pub use linux::Linux;
 
+pub struct Count {
+    total: u64,
+    used: u64,
+}
+
+pub struct CountsAll {
+    cores: Vec<Count>,
+    all: Count,
+}
+
 pub trait Platform {
     fn init() -> Self;
     fn get_all(&self) -> &'_ [i32];
